@@ -2,22 +2,21 @@ package main
 
 import (
 	"fmt"
-	"log"
-
-	functions "Module/Functions"
 )
 
+func nextID() func() int  {
+	value := 0
+	return func() int {
+		value++
+		return value
+	}
+}
+
+func multiplier(factor int) func(int)int  {
+	
+}
 func main() {
+	count := nextID()
+	fmt.Println(count())
 
-	names := []string{"chus cuoi", "chi hang", "tho ngoc"}
-
-	messages, err := functions.NameGreetings(names)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, message := range messages {
-		fmt.Println(message)
-	}
 }
