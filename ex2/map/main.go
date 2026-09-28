@@ -1,4 +1,4 @@
-package mapcoffee
+package main
 
 func main() {
 	menu := make(map[int]Coffee)

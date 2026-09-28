@@ -1,4 +1,4 @@
-package mapcoffee
+package main
 
 import "fmt"
 

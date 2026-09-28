@@ -1,4 +1,4 @@
-package bai1slice
+package main
 
 func main() {
 	menu := []Coffee{}

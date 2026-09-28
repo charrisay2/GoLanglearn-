@@ -1,4 +1,4 @@
-package bai1slice
+package main
 
 import "fmt"
 
@@ -41,7 +41,6 @@ func editCoffee(menu []Coffee, id int, name string, price float64) []Coffee {
 }
 
 func displayMenu(menu []Coffee) {
-	fmt.Println("\n===== MENU =====")
 
 	if len(menu) == 0 {
 		fmt.Println("Menu đang trống!")
