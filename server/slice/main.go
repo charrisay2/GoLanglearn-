@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"net/http"
+	configs "sliceServer/Configs"
 	"sliceServer/routes"
-	"sliceServer/services"
 )
 
 func main() {
+	configs.Connect()
 	routes.UserRoute()
-	services.LoadUsers()
 	fmt.Println("server is running at: http://localhost:9999/")
 	err := http.ListenAndServe(":9999", nil)
 	if err != nil {

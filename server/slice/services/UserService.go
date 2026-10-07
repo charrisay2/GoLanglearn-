@@ -1,24 +1,54 @@
 package services
 
 import (
-	"encoding/json"
-	"os"
+	"context"
+	configs "sliceServer/Configs"
 	"sliceServer/models"
+
+	_ "github.com/joho/godotenv/autoload"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-var Users []models.User
-
-const filePath = "Datas/UserData.json"
-
-func LoadUsers() error {
-	file, _ := os.Open(filePath)
-	defer file.Close()
-	return json.NewDecoder(file).Decode(&Users)
+func GetCollection() *mongo.Collection {
+	return configs.DB.Collection("users")
 }
-func SaveUsers() error {
-	file, _ := os.Create(filePath)
-	defer file.Close()
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", " ")
-	return encoder.Encode(Users)
+func GetAllUsers() []models.User {
+	var users []models.User
+	cursor, _ := GetCollection().Find(context.TODO(), bson.M{})
+	cursor.All(context.TODO(), &users)
+	return users
+}
+
+func Create(newUser models.User) models.User {
+	newUser.ID = bson.NewObjectID()
+	GetCollection().InsertOne(context.TODO(), newUser)
+	return newUser
+}
+
+func GetUserById(id string) models.User {
+	var user models.User
+	objID, _ := bson.ObjectIDFromHex(id)
+	GetCollection().FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&user)
+	return user
+}
+
+func UserExistByID(id string) bool {
+	user := GetUserById(id)
+	if user.ID.IsZero() {
+		return false
+	}
+	return true
+}
+func CreateOrder(order models.Order) (int64, error) {
+	result, err := configs.MySQLDB.Exec(
+		`INSERT INTO orders (user_id, product_name, quantity, price)
+VALUES (?, ?, ?, ?)`,
+		order.UserID, order.ProductName, order.Quantity, order.Price,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.LastInsertId()
 }
